@@ -1,0 +1,247 @@
+#include<iostream>
+#include <list>
+#include <string>
+#include "time.h"
+#include <stdio.h>
+using namespace std;
+
+class Hash
+{
+    int size1;
+    list<int> *table;
+    public:
+        Hash(int x)
+        {
+            this->size1 = x;
+            table = new list<int>[size1];
+        }
+        void insertval(int x)
+        {
+            int index = hashFunction(x);
+            table[index].push_back(x);
+        }
+        bool searchval(int x)
+        {
+            bool yes=false;
+            int index= hashFunction(x);
+            list <int> :: iterator i;
+            for(i= table[index].begin(); i!= table[index].end();i++)
+            {
+                if(*i==x)
+                {
+                    cout<<"Found in the hash at index "<<index <<endl;
+                    yes=true;
+                }
+            }
+            return yes;
+
+        }
+        void deleteval(int key)
+        {
+            int index = hashFunction(key);
+            list <int> :: iterator i;
+            for (i = table[index].begin();i != table[index].end(); i++)
+            {
+                if (*i == key)
+                    break;
+            }
+            if (i != table[index].end())
+                table[index].erase(i);
+        }
+        int hashFunction(int x)
+        {
+            return (x % size1);
+        }
+        void displayHash()
+        {
+            for (int i = 0; i < size1; i++)
+            {
+                cout << i;
+                for (auto x : table[i])
+                    cout << " --> " << x;
+                cout << endl;
+            }
+        }
+};
+
+void selectionSort(int a[], int n)
+{
+   int i, j, min, temp;
+   for (i = 0; i < n - 1; i++) {
+      min = i;
+      for (j = i + 1; j < n; j++)
+         if (a[j] < a[min])
+            min = j;
+      temp = a[i];
+      a[i] = a[min];
+      a[min] = temp;
+   }
+}
+//https://www.geeksforgeeks.org/delete-an-element-from-array-using-two-traversals-and-one-traversal/
+int deleteElement(int arr[], int n, int x)
+{
+   // Search x in array
+   int i;
+   for (i=0; i<n; i++)
+      if (arr[i] == x)
+         break;
+
+   // If x found in array
+   if (i < n)
+   {
+     // reduce size of array and move all
+     // elements on space ahead
+     n = n - 1;
+     for (int j=i; j<n; j++)
+        arr[j] = arr[j+1];
+   }
+
+   return n;
+}
+bool unsortsearch(int arr[], int n, int x)
+{
+    for(int i=0; i<n; i++)
+    {
+        if(x==arr[i])
+        {
+            cout<<"Value is present in the array"<<endl;
+            return true;
+        }
+    }
+    return false;
+}
+
+
+int main()
+{
+    clock_t t;
+    int i;
+    cout<<"How many data entries: ";
+    cin >> i;
+    int a[i]={};
+    for(int y=0; y< i ; y++)
+    {
+        int x=0;
+        cout<<"Enter data value ";
+        cin >> x;
+        a[y]=x;
+    }
+
+    int z;
+    cout<<"# Indexes of Hash: ";
+    cin >> z;
+    Hash h(z);
+
+    t = clock();
+    cout<<"-----------------------------------------------------------"<<endl;
+    cout<<"Hash Insert"<<endl;
+    for (int p = 0; p < i; p++)
+        h.insertval(a[p]);
+    t = clock() - t;
+    h.displayHash();
+    printf ("Time taken: (%f seconds).\n",((float)t)/CLOCKS_PER_SEC);
+
+    int unsorted[i]={};
+    cout<<"-----------------------------------------------------------"<<endl;
+    cout<<"Unsorted Array Insert"<<endl;
+    t=clock();
+    for(int q=0; q<i; q++)
+    {
+        unsorted[q]=a[q];
+        cout<<unsorted[q]<<" ";
+    }
+    cout<<endl;
+    t=clock()-t;
+    printf ("Time taken: (%f seconds).\n",((float)t)/CLOCKS_PER_SEC);
+    cout<<"-----------------------------------------------------------"<<endl;
+    cout<<"Sorted Array Insert"<<endl;
+    int sorted[i]={};
+    t=clock();
+    for(int q=0;q<i; q++)
+    {
+        sorted[q]=a[q];
+    }
+    selectionSort(sorted, i);
+    for(int q=0; q<i; q++)
+    {
+        cout<<sorted[q]<<" ";
+    }
+    cout<<endl;
+    t=clock()-t;
+    printf ("Time taken: (%f seconds).\n",((float)t)/CLOCKS_PER_SEC);
+    cout<<"-----------------------------------------------------------"<<endl;
+
+    int deletion;
+    cout<<"How many deletions: ";
+    cin >> deletion;
+    int b[deletion]={};
+    for(int p=0; p< deletion; p++)
+    {
+        int deleted;
+        cout<<"Enter desired deleted value: ";
+        cin >> deleted;
+        b[p]=deleted;
+    }
+
+
+    cout<<"-----------------------------------------------------------"<<endl;
+    cout<<"Deletion Hash"<<endl;
+    t=clock();
+    for(int p=0; p<deletion; p++)
+    {
+        h.deleteval(b[p]);
+    }
+    t=clock()-t;
+    h.displayHash();
+    printf ("Time taken: (%f seconds).\n",((float)t)/CLOCKS_PER_SEC);
+    cout<<"-----------------------------------------------------------"<<endl;
+    cout<<"Deletion Unsorted Array"<<endl;
+    t=clock();
+    int n=sizeof(unsorted)/sizeof(unsorted[0]);
+    for(int p=0;p< deletion; p++)
+    {
+       n = deleteElement(unsorted, n, b[p]);
+    }
+    for (int i=0; i<n; i++)
+       cout << unsorted[i] << " ";
+    cout<<endl;
+    t=clock()-t;
+    printf ("Time taken: (%f seconds).\n",((float)t)/CLOCKS_PER_SEC);
+    cout<<"-----------------------------------------------------------"<<endl;
+    cout<<"Deletion Sorted Array"<<endl;
+    t=clock();
+    int m=sizeof(sorted)/sizeof(sorted[0]);
+    for(int p=0;p< deletion; p++)
+    {
+       m = deleteElement(sorted, n, b[p]);
+    }
+    for (int i=0; i<m; i++)
+       cout << sorted[i] << " ";
+    cout<<endl;
+    t=clock()-t;
+    printf ("Time taken: (%f seconds).\n",((float)t)/CLOCKS_PER_SEC);
+    cout<<"-----------------------------------------------------------"<<endl;
+    int searchnum;
+    cout<<"What number will you like to search: ";
+    cin >> searchnum;
+    cout<<"-----------------------------------------------------------"<<endl;
+    cout<<"Hash Search"<<endl;
+    t=clock();
+    h.searchval(searchnum);
+    t=clock()-t;
+    printf ("Time taken: (%f seconds).\n",((float)t)/CLOCKS_PER_SEC);
+    cout<<"-----------------------------------------------------------"<<endl;
+    cout<<"Unsorted Search"<<endl;
+    t=clock();
+    unsortsearch(unsorted, m, searchnum);
+    t=clock()-t;
+    printf ("Time taken: (%f seconds).\n",((float)t)/CLOCKS_PER_SEC);
+    cout<<"-----------------------------------------------------------"<<endl;
+    cout<<"Sorted Search"<<endl;
+    t=clock();
+    unsortsearch(sorted, n, searchnum);
+    t=clock()-t;
+    printf ("Time taken: (%f seconds).\n",((float)t)/CLOCKS_PER_SEC);
+    cout<<"-----------------------------------------------------------"<<endl;
+  return 0;
+}
